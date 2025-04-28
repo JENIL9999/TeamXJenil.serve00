@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Fire Likes Booster | CuteHack</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Orbitron', sans-serif;
+      height: 100vh;
+      background: #0f0f0f;
+      color: #f00;
+      overflow: hidden;
+    }
+    .particles {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 30px;
+      border-radius: 15px;
+      background: rgba(255, 0, 0, 0.05);
+      box-shadow: 0 0 15px #f00;
+      transform-style: preserve-3d;
+      transition: 0.2s;
+    }
+    h2 { text-align: center; margin-bottom: 20px; }
+    input, select, button {
+      width: 100%;
+      margin: 10px 0;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    input, select { background: #111; color: #f00; }
+    button {
+      background: #f00;
+      color: #000;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    #loadingBar {
+      width: 0;
+      height: 4px;
+      background: red;
+      transition: width 2s ease;
+      margin-top: 10px;
+    }
+    #likesInjected {
+      font-size: 22px;
+      margin-top: 10px;
+      color: red;
+      text-align: center;
+      display: none;
+    }
+    #console {
+      background: #000;
+      color: #f00;
+      padding: 10px;
+      margin-top: 20px;
+      height: 150px;
+      overflow: auto;
+      font-family: monospace;
+      font-size: 14px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js" class="particles"></div>
+  <div class="container" id="card">
+    <h2>Free Fire Likes Booster</h2>
+    <input type="text" id="uid" placeholder="Enter UID" />
+    <select id="region">
+      <option value="ind">🇮🇳 India</option>
+      <option value="bd">🇧🇩 Bangladesh</option>
+      <option value="br">🇧🇷 Brazil</option>
+    </select>
+    <button onclick="sendLikes()">Send Likes</button>
+    <div id="loadingBar"></div>
+    <div id="likesInjected"></div>
+    <div id="console"></div>
+  </div>  <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>  
+  <script>
+    particlesJS.load('particles-js', 'https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
+
+    const card = document.getElementById('card');
+    document.addEventListener('mousemove', e => {
+      const x = (window.innerWidth / 2 - e.pageX) / 25;
+      const y = (window.innerHeight / 2 - e.pageY) / 25;
+      card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+    });
+
+    const consoleBox = document.getElementById("console");
+
+    function log(text) {
+      consoleBox.innerHTML += `> ${text}<br>`;
+      consoleBox.scrollTop = consoleBox.scrollHeight;
+    }
+
+    function animateLikes(start, end) {
+      let current = start;
+      const counter = document.getElementById("likesInjected");
+      counter.style.display = 'block';
+      const interval = setInterval(() => {
+        if (current >= end) clearInterval(interval);
+        counter.textContent = `Likes Injected: ${current}`;
+        current += Math.ceil((end - start) / 30);
+      }, 30);
+    }
+
+    function sendLikes() {
+    const uid = document.getElementById("uid").value;
+    const region = document.getElementById("region").value;
+    if (!uid) return alert("Enter UID first");
+
+    document.getElementById("loadingBar").style.width = "0";
+    setTimeout(() => {
+        document.getElementById("loadingBar").style.width = "100%";
+    }, 100);
+
+    log("Connecting to Garena Server...");
+
+    // Using PHP Proxy Script
+    fetch(`proxy.php?uid=${uid}&server_name=${region}`)
+        .then(res => res.json())
+        .then(data => {
+            // Checking if response is valid and status is success
+            if (data.status === 1) {
+                log(`User: ${data.PlayerNickname} (${data.UID})`);
+                log(`Likes Given: ${data.LikesGivenByAPI}`);
+                log(`Previous Likes: ${data.LikesbeforeCommand}`);
+                log(`Updated Likes: ${data.LikesafterCommand}`);
+                animateLikes(data.LikesbeforeCommand, data.LikesafterCommand);
+            } else {
+                log("Failed to send likes. Please try again.");
+                document.getElementById("likesInjected").textContent = "Error: Unable to inject likes.";
+                document.getElementById("likesInjected").style.color = "red";
+            }
+        })
+        .catch(error => {
+            // Handle network or other errors
+            log("API Error: Could not connect.");
+            document.getElementById("likesInjected").textContent = "Error: Could not connect to API.";
+            document.getElementById("likesInjected").style.color = "red";
+        });
+}
+  </script>
+</body>
+</html>
